@@ -5,5 +5,5 @@ def home(request):
     # Option 1: Simple text response
     return HttpResponse("Hello NDANA DYNASTY is live!")
 
-    # Option 2: If you want to use a template:
+    # Option 2: If you want to use a template instead:
     # return render(request, "index.html")
