@@ -55,10 +55,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ndanadynasty.wsgi.application"
 
-# Database (SQLite fallback, PostgreSQL if DATABASE_URL is set)
+# Database (SQLite fallback, PostgreSQL only if DATABASE_URL is set)
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR}/db.sqlite3"
+        default=f"sqlite:///{BASE_DIR}/db.sqlite3",
+        conn_max_age=600,
+        ssl_require=False
     )
 }
 
