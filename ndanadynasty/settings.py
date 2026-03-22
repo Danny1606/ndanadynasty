@@ -54,7 +54,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ndanadynasty.wsgi.application"
 
-# ✅ Force SQLite only
+# ✅ Force SQLite only (no Postgres)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
