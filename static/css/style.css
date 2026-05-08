@@ -1,0 +1,12 @@
+.comment-bubble {
+  background-color: #e1ffc7;
+  border-radius: 15px;
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.comment-bubble:hover {
+  background-color: #d4f5b0;
+  transform: translateX(-10px); /* swipe-left effect */
+}
