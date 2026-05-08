@@ -1,130 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>NDANA DYNASTY</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-  <style>
-    .hero { background: linear-gradient(to right, #0d6efd, #0a58ca); color: white; padding: 4rem 2rem; text-align: center; }
-    .section-title { border-bottom: 2px solid #0d6efd; display: inline-block; margin-bottom: 1rem; }
-    .handwritten { font-family: 'Dancing Script', cursive; font-size: 1.2rem; }
-  </style>
-</head>
-<body>
-  <!-- Hero -->
-  <header class="hero">
-    <h1 class="display-4 fw-bold">NDANA DYNASTY</h1>
-    <p class="lead">This is our family hub where we share updates, celebrate milestones, and stay connected across generations.</p>
-    <div class="mt-3">
-      <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#addPostModal">Add Post</button>
-      <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
-    </div>
-  </header>
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 
-  <!-- Posts -->
-  <div class="container my-5">
-    <h2 class="section-title">Family Posts</h2>
-    {% for news in family_news %}
-      <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title">{{ news.title }}</h5>
-          <p class="card-text">{{ news.content }}</p>
-          <p class="text-muted">By {{ news.author }}</p>
-          <div class="d-flex gap-2">
-            <a href="{% url 'edit_news' news.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-            <a href="{% url 'delete_news' news.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-          </div>
-        </div>
-      </div>
-    {% empty %}
-      <p class="text-muted">No posts yet. Be the first to share!</p>
-    {% endfor %}
-  </div>
+<!-- Crest only once at top -->
+<div class="text-center mb-4">
+  <img src="{% static 'images/ndana_dynasty_logo.png' %}" 
+       alt="NDANA DYNASTY Crest" 
+       class="crest-logo mb-3">
+</div>
 
-  <!-- Events -->
-  <div class="container my-5">
-    <h2 class="section-title">Upcoming Events</h2>
-    {% for note in notifications %}
-      {% if note.date == today %}
-        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-          <strong>Today:</strong> {{ note.message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      {% else %}
-        <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
-          <strong>{{ note.date }}:</strong> {{ note.message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+<!-- Add Post Section -->
+<h2>Add a New Post</h2>
+<form method="post" action="{% url 'add_news' %}" enctype="multipart/form-data" class="mb-4">
+  {% csrf_token %}
+  {{ form.title }}
+  {{ form.content }}
+  {{ form.author }}
+  {{ form.image }} <!-- allow image upload -->
+  <button type="submit" class="btn btn-success">Add Post</button>
+</form>
+
+<!-- Family Posts (newest first) -->
+<h2>Family Posts</h2>
+{% for post in family_news %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>{{ post.title }}</h5>
+      <p>{{ post.content }}</p>
+      {% if post.image %}
+        <img src="{{ post.image.url }}" class="img-fluid mb-2" alt="Post image">
       {% endif %}
-    {% empty %}
-      <p class="text-muted">No upcoming events yet.</p>
-    {% endfor %}
-  </div>
+      <small>By {{ post.author }} on {{ post.created_at }}</small>
+      <div class="mt-2">
+        <a href="{% url 'edit_news' post.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <form method="post" action="{% url 'delete_news' post.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
 
-  <!-- WhatsApp -->
-  <div class="container text-center my-5">
-    <h2 class="section-title">Family Group</h2>
-    <p>Join our WhatsApp group to stay connected with relatives across wards and counties.</p>
-    <div class="d-flex justify-content-center">
-      <a href="https://chat.whatsapp.com/Ih1AEEPzWylJgj3P3gtd0i" class="btn btn-success btn-lg">Join WhatsApp Group</a>
+    <!-- WhatsApp-style Comments -->
+    <div class="card-footer">
+      <h6>Comments</h6>
+      <div class="comments-list">
+        {% for comment in post.comments.all %}
+          <div class="comment-bubble" onclick="replyTo('{{ comment.author }}')">
+            <p>{{ comment.body }}</p>
+            <small>By {{ comment.author }} on {{ comment.created_at }}</small>
+          </div>
+        {% empty %}
+          <p>No comments yet.</p>
+        {% endfor %}
+      </div>
+
+      <!-- WhatsApp-style comment box -->
+      <form method="post" class="mt-2">
+        {% csrf_token %}
+        {{ comment_form.author }}
+        {{ comment_form.body }}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <button type="submit" name="comment_submit" class="btn btn-sm btn-primary">Send</button>
+      </form>
     </div>
   </div>
+{% endfor %}
 
-  <!-- Footer -->
-  <footer class="bg-dark text-white text-center py-3">
-    <p>&copy; 2026 NDANA DYNASTY — Family Hub</p>
-    <p class="handwritten">For more information contact admin: 0714724163</p>
-  </footer>
-
-  <!-- Add Post Modal -->
-  <div class="modal fade" id="addPostModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form method="post" action="{% url 'add_news' %}">
+<!-- Upcoming Events -->
+<h2>Upcoming Events</h2>
+{% for note in notifications %}
+  <div class="card mb-2">
+    <div class="card-body">
+      <p>{{ note.date }}: {{ note.message }}</p>
+      <div class="mt-2">
+        <a href="{% url 'edit_notification' note.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <form method="post" action="{% url 'delete_notification' note.id %}" style="display:inline;">
           {% csrf_token %}
-          <div class="modal-header">
-            <h5 class="modal-title">Add New Post</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            {{ form.title }}
-            {{ form.content }}
-            {{ form.author }}
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          </div>
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
         </form>
       </div>
     </div>
   </div>
+{% empty %}
+  <p>No upcoming events.</p>
+{% endfor %}
 
-  <!-- Add Event Modal -->
-  <div class="modal fade" id="addEventModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <form method="post" action="{% url 'add_notification' %}">
-          {% csrf_token %}
-          <div class="modal-header">
-            <h5 class="modal-title">Add Upcoming Event</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            {{ notification_form.message }}
-            {{ notification_form.date }}
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-warning">Add Event</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}
