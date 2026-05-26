@@ -34,7 +34,8 @@
     }
 
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
         width: 100%;
         padding: 12px;
         border: 1px solid #d1d5db;
@@ -45,7 +46,8 @@
     }
 
     .form-group input:focus,
-    .form-group textarea:focus {
+    .form-group textarea:focus,
+    .form-group select:focus {
         outline: none;
         border-color: #667eea;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -53,7 +55,7 @@
 
     .form-group textarea {
         resize: vertical;
-        min-height: 150px;
+        min-height: 120px;
     }
 
     .form-group small {
@@ -74,18 +76,10 @@
         margin-top: 6px;
     }
 
-    .current-image {
-        margin-top: 15px;
-        padding: 10px;
-        background: #f9fafb;
-        border-radius: 8px;
-        text-align: center;
-    }
-
-    .current-image img {
-        max-width: 100%;
-        max-height: 250px;
-        border-radius: 6px;
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
     }
 
     .btn-group {
@@ -139,6 +133,10 @@
             font-size: 1.4rem;
         }
 
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
         .btn-group {
             flex-direction: column;
         }
@@ -150,47 +148,69 @@
 </style>
 
 <div class="form-container">
-    <h2>✏️ Edit Post</h2>
-    <p>Update your post content or images</p>
+    <h2>📅 Create a Family Event</h2>
+    <p>Plan and share upcoming family gatherings</p>
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="{{ form.content.id_for_label }}">Post Content *</label>
-            {{ form.content }}
-            {% if form.content.errors %}
-                <div class="error-message">{{ form.content.errors }}</div>
+            <label for="{{ form.title.id_for_label }}">Event Title *</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
             {% endif %}
+            <small>Give your event a descriptive name</small>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Date *</label>
+                {{ form.date }}
+                {% if form.date.errors %}
+                    <div class="error-message">{{ form.date.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.time.id_for_label }}">Time</label>
+                {{ form.time }}
+                {% if form.time.errors %}
+                    <div class="error-message">{{ form.time.errors }}</div>
+                {% endif %}
+            </div>
         </div>
 
         <div class="form-group">
-            <label for="{{ form.image.id_for_label }}">Update Photo</label>
+            <label for="{{ form.location.id_for_label }}">Location</label>
+            {{ form.location }}
+            {% if form.location.errors %}
+                <div class="error-message">{{ form.location.errors }}</div>
+            {% endif %}
+            <small>Where will the event take place?</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="error-message">{{ form.description.errors }}</div>
+            {% endif %}
+            <small>Provide details about the event</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Event Image</label>
             {{ form.image }}
             {% if form.image.errors %}
                 <div class="error-message">{{ form.image.errors }}</div>
             {% endif %}
-            <small>Upload a new image or leave blank to keep the current one</small>
-        </div>
-
-        {% if post.image %}
-        <div class="current-image">
-            <p style="color: #6b7280; margin-bottom: 10px;"><strong>Current Image:</strong></p>
-            <img src="{{ post.image.url }}" alt="Current post image" loading="lazy">
-        </div>
-        {% endif %}
-
-        <div class="form-group">
-            <label for="{{ form.author_name.id_for_label }}">Your Name (Optional)</label>
-            {{ form.author_name }}
-            {% if form.author_name.errors %}
-                <div class="error-message">{{ form.author_name.errors }}</div>
-            {% endif %}
+            <small>Upload a photo for your event</small>
         </div>
 
         <div class="btn-group">
             <button type="submit" class="btn-submit">
-                <i class="fas fa-save"></i> Save Changes
+                <i class="fas fa-calendar-plus"></i> Create Event
             </button>
             <a href="{% url 'news_home' %}" class="btn-cancel">
                 <i class="fas fa-times"></i> Cancel

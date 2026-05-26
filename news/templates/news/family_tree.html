@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="py-5">
+  <div class="container">
+    <h1 class="mb-4">Family Tree</h1>
+    <p class="lead">A simple family chart to show how our branches connect.</p>
+    <div class="family-tree-wrapper mt-5">
+      <ul class="family-tree">
+        <li>
+          <div class="family-node">Grandparents</div>
+          <ul>
+            <li>
+              <div class="family-node">Dspy Ndana</div>
+              <ul>
+                <li>
+                  <div class="family-node">Amina Ndana</div>
+                  <ul>
+                    <li><div class="family-node">Juma Ndana</div></li>
+                    <li><div class="family-node">Zuri Ndana</div></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+.family-tree-wrapper {
+  display: flex;
+  justify-content: center;
+}
+.family-tree {
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+.family-tree ul {
+  padding-top: 20px;
+  position: relative;
+}
+.family-tree ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-left: 1px solid #dee2e6;
+  width: 0;
+  height: 20px;
+}
+.family-tree li {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px;
+  padding: 20px 5px 0 5px;
+  position: relative;
+}
+.family-tree li::before, .family-tree li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  border-top: 1px solid #dee2e6;
+  width: 50%;
+  height: 20px;
+}
+.family-tree li::after {
+  right: auto;
+  left: 50%;
+  border-left: 1px solid #dee2e6;
+}
+.family-tree li:only-child::before, .family-tree li:only-child::after {
+  display: none;
+}
+.family-tree li:only-child {
+  padding-top: 0;
+}
+.family-tree li:first-child::before, .family-tree li:last-child::after {
+  border: 0 none;
+}
+.family-node {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 50px;
+  background: #0d6efd;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(13, 110, 253, 0.16);
+}
+</style>
+{% endblock %}

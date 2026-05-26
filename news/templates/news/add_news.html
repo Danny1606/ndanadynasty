@@ -1,9 +1,215 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Add Post</h2>
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-success">Save</button>
-</form>
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+
+    .form-container p {
+        color: #6b7280;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+
+    .form-group.error input,
+    .form-group.error textarea {
+        border-color: #ef4444;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    .image-preview {
+        margin-top: 15px;
+        border-radius: 8px;
+        max-width: 100%;
+        max-height: 300px;
+        display: none;
+    }
+
+    .image-preview.show {
+        display: block;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn-submit, .btn-cancel {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .form-container h2 {
+            font-size: 1.4rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h2>📸 Share a Post</h2>
+    <p>Share photos, memes, and stories with your family</p>
+
+    <form method="post" enctype="multipart/form-data" id="postForm">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.content.id_for_label }}">What's on your mind? *</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="error-message">{{ form.content.errors }}</div>
+            {% endif %}
+            <small>Share a funny story, quote, or just what you're thinking</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Add a Photo</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="error-message">{{ form.image.errors }}</div>
+            {% endif %}
+            <small>Upload an image (JPEG, PNG, GIF). Images will be optimized for all devices.</small>
+            <img id="imagePreview" class="image-preview" alt="Image preview">
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.author_name.id_for_label }}">Your Name (Optional)</label>
+            {{ form.author_name }}
+            {% if form.author_name.errors %}
+                <div class="error-message">{{ form.author_name.errors }}</div>
+            {% endif %}
+            <small>Leave blank to use your username</small>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Share Post
+            </button>
+            <a href="{% url 'news_home' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Image preview
+    const imageInput = document.getElementById('id_image');
+    const imagePreview = document.getElementById('imagePreview');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>
 {% endblock %}

@@ -18,8 +18,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "news",  # 👈 correct app name
+    "news",  # 👈 your app
 ]
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -35,7 +36,7 @@ ROOT_URLCONF = "ndanadynasty.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates"],  # global templates folder
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -50,7 +51,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ndanadynasty.wsgi.application"
 
-# ✅ Force SQLite only
+# ✅ SQLite database
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -73,4 +74,10 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 👇 Custom user model
+AUTH_USER_MODEL = "news.CustomUser"

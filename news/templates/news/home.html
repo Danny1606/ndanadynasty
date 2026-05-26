@@ -1,88 +1,1338 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-<!-- Crest only once at top -->
-<div class="text-center mb-4">
-  <img src="{% static 'images/ndana_dynasty_logo.png' %}" 
-       alt="NDANA DYNASTY Crest" 
-       class="crest-logo mb-3">
+    body {
+        background: #f0f2f5;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    .container-main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    /* Main Content Layout */
+    .main-layout {
+        display: grid;
+        grid-template-columns: 1fr 600px 1fr;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .sidebar, .activity-feed {
+        display: none;
+    }
+
+    /* Feed */
+    .feed-section {
+        grid-column: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .welcome-card h2 {
+        color: #1f2937;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .welcome-card p {
+        color: #6b7280;
+        margin-bottom: 15px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-share {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-share:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Post Card */
+    .post-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s;
+    }
+
+    .post-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 15px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .post-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+    }
+
+    .post-author-info h5 {
+        margin: 0;
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .post-author-info small {
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .post-actions .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        background: #f3f4f6;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .post-actions .btn-sm:hover {
+        background: #e5e7eb;
+    }
+
+    /* Post Image */
+    .post-image-container {
+        width: 100%;
+        max-height: 500px;
+        overflow: hidden;
+        background: #f3f4f6;
+    }
+
+    .post-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+    }
+
+    /* Post Content */
+    .post-content {
+        padding: 15px;
+    }
+
+    .post-text {
+        color: #1f2937;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    /* Post Stats */
+    .post-stats {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 15px;
+        border-top: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    /* Post Interactions */
+    .post-interactions {
+        display: flex;
+        padding: 10px 15px;
+        gap: 8px;
+    }
+
+    .post-interactions .btn {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        background: #f3f4f6;
+        color: #4b5563;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .post-interactions .btn:hover {
+        background: #e5e7eb;
+    }
+
+    .post-interactions .btn.liked {
+        color: #ef4444;
+    }
+
+    /* Comments Section */
+    .comments-section {
+        padding: 15px;
+        border-top: 1px solid #e5e7eb;
+        background: #f9fafb;
+    }
+
+    .comments-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+
+    .comment-item {
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 3px solid #667eea;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 0.9rem;
+    }
+
+    .comment-meta {
+        font-size: 0.8rem;
+        color: #9ca3af;
+    }
+
+    .comment-text {
+        color: #4b5563;
+        font-size: 0.95rem;
+        line-height: 1.4;
+        margin-top: 5px;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    /* Event Card */
+    .event-card {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #667eea;
+    }
+
+    .event-date {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .event-card h5 {
+        color: #1f2937;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .event-card p {
+        color: #6b7280;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .event-location {
+        color: #9ca3af;
+        font-size: 0.85rem;
+        margin-top: 8px;
+    }
+
+    /* Activity Feed */
+    .activity-section {
+        background: white;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .activity-title {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+    }
+
+    .activity-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 0.95rem;
+        color: #4b5563;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-badge {
+        background: #f3f4f6;
+        color: #667eea;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .activity-time {
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: white;
+        border-radius: 12px;
+        padding: 40px 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state h4 {
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+    }
+
+    .empty-state p {
+        color: #9ca3af;
+        margin-bottom: 20px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+        .main-layout {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .feed-section {
+            grid-column: 1;
+        }
+
+        .sidebar, .activity-feed {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container-main {
+            padding: 10px;
+        }
+
+        .welcome-card {
+            padding: 15px;
+        }
+
+        .welcome-card h2 {
+            font-size: 1.4rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-share {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .post-header {
+            flex-wrap: wrap;
+        }
+
+        .post-actions {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .post-stats {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .post-interactions {
+            flex-wrap: wrap;
+        }
+
+        .post-interactions .btn {
+            flex: 0 1 calc(50% - 4px);
+        }
+
+        .comment-item {
+            padding: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .welcome-card h2 {
+            font-size: 1.2rem;
+        }
+
+        .post-header {
+            padding: 12px;
+        }
+
+        .post-content {
+            padding: 12px;
+        }
+
+        .post-text {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+<div class="container-main">
+    <!-- Welcome Card -->
+    <div class="feed-section">
+        <div class="welcome-card">
+            <h2>👨‍👩‍👧‍👦 NDANA DYNASTY Family Hub</h2>
+            <p>Share moments, celebrate together, stay connected</p>
+            <div class="action-buttons">
+                {% if user.is_authenticated %}
+                <a href="{% url 'add_post' %}" class="btn-share">
+                    <i class="fas fa-plus"></i> Share a Post
+                </a>
+                <a href="{% url 'add_event' %}" class="btn-share">
+                    <i class="fas fa-calendar-plus"></i> Create Event
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn-share">
+                    <i class="fas fa-sign-in-alt"></i> Login to Share
+                </a>
+                <a href="{% url 'signup' %}" class="btn-share">
+                    <i class="fas fa-user-plus"></i> Join Family
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Posts Section -->
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card">
+                <!-- Post Header -->
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="post-avatar">
+                            {{ post.get_author_display|first|upper }}
+                        </div>
+                        <div class="post-author-info">
+                            <h5>{{ post.get_author_display }}</h5>
+                            <small>{{ post.created_at|date:"M d, Y" }} at {{ post.created_at|time:"H:i" }}</small>
+                            {% if post.updated_at != post.created_at %}
+                            <br>
+                            <small>(edited {{ post.updated_at|date:"M d, Y H:i" }})</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if user.is_authenticated and user == post.author %}
+                    <div class="post-actions">
+                        <a href="{% url 'edit_post' post.id %}" class="btn-sm" title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_post' post.id %}" class="btn-sm" title="Delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Post Image -->
+                {% if post.image %}
+                <div class="post-image-container">
+                    <img src="{{ post.image.url }}" alt="Post image" class="post-image" loading="lazy">
+                </div>
+                {% endif %}
+
+                <!-- Post Content -->
+                <div class="post-content">
+                    <div class="post-text">{{ post.content }}</div>
+                </div>
+
+                <!-- Post Stats -->
+                <div class="post-stats">
+                    <span><i class="fas fa-heart"></i> {{ post.likes_count }} Likes</span>
+                    <span><i class="fas fa-comments"></i> {{ post.comments.count }} Comments</span>
+                </div>
+
+                <!-- Post Interactions -->
+                <div class="post-interactions">
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'like_post' post.id %}" method="post" style="flex: 1;">
+                        {% csrf_token %}
+                        {% if post.id in user_likes %}
+                            <button type="submit" class="btn liked">
+                                <i class="fas fa-heart"></i> Unlike
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                        {% endif %}
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'add_comment' post.id %}" class="btn" style="flex: 1; text-decoration: none;">
+                        <i class="fas fa-comment"></i> Comment
+                    </a>
+                </div>
+
+                <!-- Comments Section -->
+                {% if post.comments.all %}
+                <div class="comments-section">
+                    <div class="comments-title">
+                        <i class="fas fa-comments"></i> Comments ({{ post.comments.count }})
+                    </div>
+                    {% for comment in post.comments.all %}
+                    <div class="comment-item">
+                        <div class="comment-author">
+                            {{ comment.get_author_display }}
+                            <span class="comment-meta">
+                                • {{ comment.created_at|date:"M d, H:i" }}
+                                {% if comment.updated_at != comment.created_at %}
+                                <span class="activity-badge">edited</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="comment-text">{{ comment.text }}</div>
+                        {% if user.is_authenticated and user == comment.author %}
+                        <div style="margin-top: 5px; display: flex; gap: 8px;">
+                            <a href="{% url 'edit_comment' comment.id %}" style="font-size: 0.85rem; color: #667eea; text-decoration: none;">Edit</a>
+                            <a href="{% url 'delete_comment' comment.id %}" style="font-size: 0.85rem; color: #ef4444; text-decoration: none;">Delete</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h4>📸 No posts yet!</h4>
+                <p>Be the first to share a memory with the family!</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'add_post' %}" class="btn-share">
+                    <i class="fas fa-plus"></i> Share Your First Post
+                </a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <!-- Events Section -->
+        {% if events %}
+        <div class="activity-section">
+            <div class="activity-title">
+                <i class="fas fa-calendar-alt"></i> Upcoming Events
+            </div>
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-date">
+                    <i class="fas fa-calendar-check"></i> {{ event.date|date:"F d, Y" }}
+                    {% if event.time %}
+                    at {{ event.time|time:"H:i" }}
+                    {% endif %}
+                </div>
+                <h5>{{ event.title }}</h5>
+                {% if event.description %}
+                <p>{{ event.description }}</p>
+                {% endif %}
+                {% if event.location %}
+                <div class="event-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ event.location }}
+                </div>
+                {% endif %}
+                {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.title }}" style="width: 100%; border-radius: 8px; margin-top: 10px; max-height: 200px; object-fit: cover;" loading="lazy">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Activity Feed Sidebar -->
+    {% if activity_logs %}
+    <div class="activity-section" style="margin-top: 30px;">
+        <div class="activity-title">
+            <i class="fas fa-stream"></i> Activity Feed
+        </div>
+        {% for activity in activity_logs %}
+        <div class="activity-item">
+            <strong>{{ activity.get_display_text }}</strong>
+            <div class="activity-time">
+                <i class="far fa-clock"></i> {{ activity.timestamp|timesince }} ago
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
 
-<!-- Add Post Section -->
-<h2>Add a New Post</h2>
-<form method="post" action="{% url 'add_news' %}" enctype="multipart/form-data" class="mb-4">
-  {% csrf_token %}
-  {{ form.title }}
-  {{ form.content }}
-  {{ form.author }}
-  {{ form.image }} <!-- allow image upload -->
-  <button type="submit" class="btn btn-success">Add Post</button>
-</form>
+{% endblock %}
+<style>
+    .welcome-section {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 0.95) 100%);
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
-<!-- Family Posts (newest first) -->
-<h2>Family Posts</h2>
-{% for post in family_news %}
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5>{{ post.title }}</h5>
-      <p>{{ post.content }}</p>
-      {% if post.image %}
-        <img src="{{ post.image.url }}" class="img-fluid mb-2" alt="Post image">
-      {% endif %}
-      <small>By {{ post.author }} on {{ post.created_at }}</small>
-      <div class="mt-2">
-        <a href="{% url 'edit_news' post.id %}" class="btn btn-sm btn-warning">Edit</a>
-        <form method="post" action="{% url 'delete_news' post.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-        </form>
-      </div>
+    .welcome-section h2 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        font-size: 2.2rem;
+    }
+
+    .welcome-section p {
+        color: #555;
+        font-size: 1.1rem;
+        margin-bottom: 0;
+        font-weight: 500;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+    }
+
+    .btn-action {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        color: white;
+    }
+
+    .posts-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .post-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .post-card:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+
+    .post-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .post-author-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .post-author-info h5 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.3rem;
+    }
+
+    .post-author-info small {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .post-actions .btn-sm {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .post-image-container {
+        width: 100%;
+        max-height: 500px;
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+
+    .post-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+    }
+
+    .post-content {
+        padding: 1.5rem;
+    }
+
+    .post-text {
+        color: #333;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .post-stats {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .like-button-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .like-button-container form {
+        display: inline;
+    }
+
+    .like-button-container button {
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .comments-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+
+    .comments-title {
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+    }
+
+    .comment-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #667eea;
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.8rem;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .comment-author {
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 1rem;
+    }
+
+    .comment-meta {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .comment-text {
+        color: #555;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .comment-actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 0.8rem;
+    }
+
+    .comment-actions .btn-sm {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        border-radius: 15px;
+    }
+
+    .add-comment-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .add-comment-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .events-section {
+        margin-top: 3rem;
+    }
+
+    .events-title {
+        color: white;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #667eea;
+    }
+
+    .event-date {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .event-card h5 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        font-size: 1.3rem;
+    }
+
+    .event-card p {
+        color: #555;
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 15px;
+        padding: 3rem 2rem;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state h4 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .empty-state p {
+        color: #999;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .welcome-section {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 1.5rem;
+        }
+
+        .welcome-section p {
+            font-size: 1rem;
+        }
+
+        .action-buttons {
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .post-header {
+            padding: 1rem;
+        }
+
+        .post-author-info h5 {
+            font-size: 1.1rem;
+        }
+
+        .post-content {
+            padding: 1rem;
+        }
+
+        .post-text {
+            font-size: 1rem;
+        }
+
+        .comment-item {
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .events-title {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+<!-- Welcome Section -->
+<div class="welcome-section">
+    <h2>👨‍👩‍👧‍👦 Welcome to NDANA DYNASTY Family Hub!</h2>
+    <p>Share memories, celebrate moments, and stay connected as a family</p>
+    <div class="action-buttons">
+        <a href="{% url 'add_post' %}" class="btn-action">
+            <i class="fas fa-plus-circle"></i> Share a Post
+        </a>
     </div>
+</div>
 
-    <!-- WhatsApp-style Comments -->
-    <div class="card-footer">
-      <h6>Comments</h6>
-      <div class="comments-list">
-        {% for comment in post.comments.all %}
-          <div class="comment-bubble" onclick="replyTo('{{ comment.author }}')">
-            <p>{{ comment.body }}</p>
-            <small>By {{ comment.author }} on {{ comment.created_at }}</small>
-          </div>
-        {% empty %}
-          <p>No comments yet.</p>
+<!-- Posts Section -->
+<div class="posts-grid">
+    {% if posts %}
+        {% for post in posts %}
+        <div class="post-card">
+            <!-- Post Header -->
+            <div class="post-header">
+                <div class="post-author-info">
+                    <h5>{{ post.get_author_display }}</h5>
+                    <small><i class="far fa-calendar"></i> {{ post.created_at|date:"M d, Y" }}</small>
+                    <br>
+                    <small><i class="far fa-clock"></i> {{ post.created_at|time:"H:i" }}</small>
+                    {% if post.updated_at != post.created_at %}
+                    <br>
+                    <small><i class="fas fa-edit"></i> (edited {{ post.updated_at|date:"M d, Y H:i" }})</small>
+                    {% endif %}
+                </div>
+                {% if user.is_authenticated and user == post.author %}
+                <div class="post-actions">
+                    <a href="{% url 'edit_post' post.id %}" class="btn btn-sm btn-light" title="Edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'delete_post' post.id %}" class="btn btn-sm btn-outline-light" title="Delete">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Post Image (if exists) -->
+            {% if post.image %}
+            <div class="post-image-container">
+                <img src="{{ post.image.url }}" alt="Post image" class="post-image">
+            </div>
+            {% endif %}
+
+            <!-- Post Content -->
+            <div class="post-content">
+                <div class="post-text">{{ post.content }}</div>
+
+                <!-- Post Stats -->
+                <div class="post-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-heart"></i> {{ post.likes.count }} Likes
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fas fa-comments"></i> {{ post.comments.count }} Comments
+                    </div>
+                </div>
+
+                <!-- Like Button -->
+                {% if user.is_authenticated %}
+                <div class="like-button-container">
+                    <form action="{% url 'like_post' post.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        {% if post.id in user_likes %}
+                            <button type="submit" class="like-button-container btn btn-danger">
+                                <i class="fas fa-heart"></i> Unlike
+                            </button>
+                        {% else %}
+                            <button type="submit" class="like-button-container btn btn-outline-danger">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+                {% else %}
+                <div class="like-button-container">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> <a href="{% url 'login' %}">Login</a> to like this post
+                    </small>
+                </div>
+                {% endif %}
+
+                <!-- Comments Section -->
+                {% if post.comments.all %}
+                <div class="comments-section">
+                    <div class="comments-title">
+                        <i class="fas fa-comments"></i> Comments ({{ post.comments.count }})
+                    </div>
+                    {% for comment in post.comments.all %}
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div>
+                                <div class="comment-author">{{ comment.get_author_display }}</div>
+                                <div class="comment-meta">
+                                    <i class="far fa-calendar"></i> {{ comment.created_at|date:"M d, Y H:i" }}
+                                    {% if comment.updated_at != comment.created_at %}
+                                    <span class="badge bg-info">edited</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if user.is_authenticated and user == comment.author %}
+                            <div class="comment-actions">
+                                <a href="{% url 'edit_comment' comment.id %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'delete_comment' comment.id %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="comment-text">{{ comment.text }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Add Comment Button -->
+                <a href="{% url 'add_comment' post.id %}" class="add-comment-btn">
+                    <i class="fas fa-reply"></i> Add Comment
+                </a>
+            </div>
+        </div>
         {% endfor %}
-      </div>
+    {% else %}
+        <div class="empty-state">
+            <h4>📸 No posts yet!</h4>
+            <p>Be the first to share a memory with the family!</p>
+            <a href="{% url 'add_post' %}" class="btn-action">
+                <i class="fas fa-plus-circle"></i> Share Your First Post
+            </a>
+        </div>
+    {% endif %}
+</div>
 
-      <!-- WhatsApp-style comment box -->
-      <form method="post" class="mt-2">
-        {% csrf_token %}
-        {{ comment_form.author }}
-        {{ comment_form.body }}
-        <input type="hidden" name="post_id" value="{{ post.id }}">
-        <button type="submit" name="comment_submit" class="btn btn-sm btn-primary">Send</button>
-      </form>
+<!-- Events Section -->
+{% if events %}
+<div class="events-section">
+    <h3 class="events-title">
+        <i class="fas fa-calendar-alt"></i> Family Events
+    </h3>
+    {% for event in events %}
+    <div class="event-card">
+        <div class="event-date">
+            <i class="fas fa-calendar-check"></i> {{ event.date|date:"F d, Y" }}
+        </div>
+        <h5>{{ event.title }}</h5>
+        {% if event.description %}
+        <p>{{ event.description }}</p>
+        {% endif %}
     </div>
-  </div>
-{% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
 
-<!-- Upcoming Events -->
-<h2>Upcoming Events</h2>
-{% for note in notifications %}
-  <div class="card mb-2">
-    <div class="card-body">
-      <p>{{ note.date }}: {{ note.message }}</p>
-      <div class="mt-2">
-        <a href="{% url 'edit_notification' note.id %}" class="btn btn-sm btn-warning">Edit</a>
-        <form method="post" action="{% url 'delete_notification' note.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-        </form>
-      </div>
+{% endblock %}
+<div class="container mt-4">
+    <!-- Welcome message -->
+    <div class="alert alert-info text-center">
+        <h2>Welcome to NDANA DYNASTY Memes Hub 🎉</h2>
+        <p>Share your best memes and connect with the family!</p>
     </div>
-  </div>
-{% empty %}
-  <p>No upcoming events.</p>
-{% endfor %}
 
+    <!-- Add Post Button (for all users) -->
+    <div class="text-center mb-4">
+        <a href="{% url 'add_post' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> 📤 Share a Meme
+        </a>
+    </div>
+
+    <!-- Posts Section -->
+    <div class="posts-section">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="card mb-4" style="border-left: 5px solid #007bff;">
+                <!-- Post Header -->
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-1">{{ post.get_author_display }}</h5>
+                        <small class="text-muted">{{ post.created_at|date:"M d, Y H:i" }}</small>
+                        {% if post.updated_at != post.created_at %}
+                        <small class="text-muted">(edited {{ post.updated_at|date:"M d, Y H:i" }})</small>
+                        {% endif %}
+                    </div>
+                    {% if user.is_authenticated and user == post.author %}
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="{% url 'edit_post' post.id %}" class="btn btn-outline-secondary" title="Edit">
+                            ✏️ Edit
+                        </a>
+                        <a href="{% url 'delete_post' post.id %}" class="btn btn-outline-danger" title="Delete">
+                            🗑️ Delete
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Post Content -->
+                <div class="card-body">
+                    <p class="card-text">{{ post.content }}</p>
+                    {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post image" class="img-fluid mb-3" style="max-height: 400px;">
+                    {% endif %}
+                </div>
+
+                <!-- Post Footer - Likes and Comments -->
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <!-- Likes -->
+                        <div>
+                            <span class="badge bg-danger">❤️ {{ post.likes.count }} Likes</span>
+                        </div>
+
+                    <!-- Like Button (for authenticated users) -->
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'like_post' post.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        {% if post.id in user_likes %}
+                            <button type="submit" class="btn btn-sm btn-danger">❤️ Unlike</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">🤍 Like</button>
+                        {% endif %}
+                    </form>
+                    {% else %}
+                    <small class="text-muted">Login to like this meme</small>
+                    {% endif %}
+                    </div>
+
+                    <!-- Comments Count -->
+                    <div class="mb-3">
+                        <strong>{{ post.comments.count }} Comments</strong>
+                    </div>
+
+                    <!-- Comments Section -->
+                    {% if post.comments.all %}
+                    <div class="comments-section mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
+                        {% for comment in post.comments.all %}
+                        <div class="comment mb-2" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ comment.get_author_display }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                                    {% if comment.updated_at != comment.created_at %}
+                                    <small class="text-muted">(edited)</small>
+                                    {% endif %}
+                                </div>
+                                {% if user.is_authenticated and user == comment.author %}
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'edit_comment' comment.id %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                        ✏️
+                                    </a>
+                                    <a href="{% url 'delete_comment' comment.id %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        🗑️
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="mb-0 mt-1">{{ comment.text }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Add Comment Button/Form -->
+                    <a href="{% url 'add_comment' post.id %}" class="btn btn-sm btn-outline-primary">
+                        💬 Add Comment
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>No memes yet! 😢</h4>
+                <p>Be the first to share a meme!</p>
+                <a href="{% url 'add_post' %}" class="btn btn-primary">Share a Meme</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Events Section (if any) -->
+    {% if events %}
+    <div class="events-section mt-5">
+        <h3 class="mb-4">Upcoming Events</h3>
+        {% for event in events %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text">
+                    <strong>Date:</strong> {{ event.date|date:"F d, Y" }}<br>
+                    {% if event.description %}
+                    <strong>Description:</strong> {{ event.description }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .comment {
+        transition: background-color 0.2s ease;
+    }
+    .comment:hover {
+        background-color: #fff !important;
+    }
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.85rem;
+    }
+</style>
 {% endblock %}

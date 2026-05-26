@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-container h2 {
+        text-align: center;
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+
+    .auth-container p {
+        text-align: center;
+        color: #6b7280;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+
+    .form-group.error input {
+        border-color: #ef4444;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .auth-container {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .auth-container h2 {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <h2>👨‍👩‍👧‍👦 Join Our Family</h2>
+    <p>Create your account to start sharing with NDANA DYNASTY</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error-message">{{ form.username.errors }}</div>
+            {% endif %}
+            <small>This will be your display name</small>
+        </div>
+
+        <div class="form-group">
+            <label for="id_first_name">First Name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <div class="error-message">{{ form.first_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">Last Name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <div class="error-message">{{ form.last_name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_pin">PIN (4 digits)</label>
+            {{ form.pin }}
+            {% if form.pin.errors %}
+                <div class="error-message">{{ form.pin.errors }}</div>
+            {% endif %}
+            <small>Create a 4-digit PIN for secure login</small>
+        </div>
+
+        <div class="form-group">
+            <label for="id_unit">Unit/Location</label>
+            {{ form.unit }}
+            {% if form.unit.errors %}
+                <div class="error-message">{{ form.unit.errors }}</div>
+            {% endif %}
+            <small>e.g., "Unit A", "Main House", "Apartment 3B"</small>
+        </div>
+
+        <div class="form-group">
+            <label for="id_picture">Profile Picture</label>
+            {{ form.picture }}
+            {% if form.picture.errors %}
+                <div class="error-message">{{ form.picture.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors }}</div>
+            {% endif %}
+            <small>{{ form.password1.help_text }}</small>
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Confirm Password</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="error-message">{{ form.password2.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit">Create Account</button>
+    </form>
+
+    <div class="login-link">
+        Already have an account? <a href="{% url 'login' %}">Login here</a>
+    </div>
+</div>
+{% endblock %}

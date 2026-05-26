@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .comment-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0;
+    }
+
+    .post-preview {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-preview h5 {
+        color: #1f2937;
+        margin-bottom: 12px;
+        font-size: 1.2rem;
+    }
+
+    .post-preview-header {
+        color: #6b7280;
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .post-preview-content {
+        background: #f9fafb;
+        padding: 15px;
+        border-radius: 8px;
+        color: #4b5563;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .post-preview-image {
+        margin-top: 15px;
+        border-radius: 8px;
+        max-width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        color: #1f2937;
+        margin-bottom: 25px;
+        font-size: 1.6rem;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        transition: border-color 0.2s;
+    }
+
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-submit, .btn-cancel {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+        .comment-container {
+            margin: 20px;
+            padding: 0;
+        }
+
+        .post-preview {
+            padding: 15px;
+        }
+
+        .form-container {
+            padding: 20px;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="comment-container">
+    <!-- Post Preview -->
+    <div class="post-preview">
+        <h5>💬 Replying to {{ post.get_author_display }}'s post</h5>
+        <div class="post-preview-header">
+            <i class="far fa-calendar"></i> {{ post.created_at|date:"M d, Y H:i" }}
+        </div>
+        <div class="post-preview-content">
+            {{ post.content }}
+        </div>
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post image" class="post-preview-image" loading="lazy">
+        {% endif %}
+    </div>
+
+    <!-- Comment Form -->
+    <div class="form-container">
+        <h2>Add Your Comment</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.text.id_for_label }}">Your Comment *</label>
+                {{ form.text }}
+                {% if form.text.errors %}
+                    <div class="error-message">{{ form.text.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.author_name.id_for_label }}">Your Name (Optional)</label>
+                {{ form.author_name }}
+                {% if form.author_name.errors %}
+                    <div class="error-message">{{ form.author_name.errors }}</div>
+                {% endif %}
+                <small>Leave blank to use your username</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check"></i> Post Comment
+                </button>
+                <a href="{% url 'news_home' %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
