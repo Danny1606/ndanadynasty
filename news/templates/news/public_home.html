@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container-main">
+    <div class="feed-section">
+        <div class="welcome-card">
+            <h2>Public Feed — NDANA DYNASTY</h2>
+            <p>Public posts and memes visible to everyone</p>
+        </div>
+
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="post-avatar">{{ post.get_author_display|first|upper }}</div>
+                        <div class="post-author-info">
+                            <h5>{{ post.get_author_display }}</h5>
+                            <small>{{ post.created_at|date:"M d, Y" }} at {{ post.created_at|time:"H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+
+                {% if post.image %}
+                <div class="post-image-container">
+                    <img src="{{ post.image.url }}" alt="Post image" class="post-image" loading="lazy">
+                </div>
+                {% endif %}
+
+                <div class="post-content">
+                    <div class="post-text">{{ post.content }}</div>
+                </div>
+
+                <div class="post-stats">
+                    <span><i class="fas fa-heart"></i> {{ post.likes_count }} Likes</span>
+                    <span><i class="fas fa-comments"></i> {{ post.comments.count }} Comments</span>
+                </div>
+
+                <div class="post-interactions">
+                    <form action="{% url 'like_post' post.id %}" method="post" style="flex: 1;">
+                        {% csrf_token %}
+                        {% if user.is_authenticated and post.id in user_likes %}
+                            <button type="submit" class="btn liked">
+                                <i class="fas fa-heart"></i> Unlike
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn">
+                                <i class="far fa-heart"></i> Like
+                            </button>
+                        {% endif %}
+                    </form>
+                    <a href="{% url 'add_comment' post.id %}" class="btn" style="flex: 1; text-decoration: none;">
+                        <i class="fas fa-comment"></i> Comment
+                    </a>
+                </div>
+
+                {% if post.comments.all %}
+                <div class="comments-section">
+                    <div class="comments-title">
+                        <i class="fas fa-comments"></i> Comments ({{ post.comments.count }})
+                    </div>
+                    {% for comment in post.comments.all %}
+                    <div class="comment-item">
+                        <div class="comment-author">
+                            {{ comment.get_author_display }}
+                            <span class="comment-meta">• {{ comment.created_at|date:"M d, H:i" }}</span>
+                        </div>
+                        <div class="comment-text">{{ comment.text }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h4>📸 No posts yet!</h4>
+                <p>Be the first to share a memory with the family!</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

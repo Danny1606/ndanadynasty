@@ -1,1 +1,1 @@
-web: gunicorn ndanadynasty.wsgi
+web: python manage.py migrate --noinput && gunicorn ndanadynasty.wsgi --bind 0.0.0.0:$PORT

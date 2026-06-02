@@ -1,21 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser, Post, Comment, Event
-
-class CustomSignupForm(UserCreationForm):
-    first_name = forms.CharField(max_length=30, required=False, label="First Name")
-    last_name = forms.CharField(max_length=150, required=False, label="Last Name")
-    pin = forms.CharField(max_length=4, help_text="Enter a 4-digit PIN")
-    unit = forms.CharField(max_length=100, required=False, label="Unit/Location", help_text="e.g., 'Unit A', 'Main House', 'Apartment 3B'")
-
-    class Meta:
-        model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'pin', 'unit', 'picture')
-
-
-class CustomLoginForm(AuthenticationForm):
-    pin = forms.CharField(max_length=4, widget=forms.PasswordInput)
-
+from .models import Post, Comment, Event
 
 class PostForm(forms.ModelForm):
     author_name = forms.CharField(
@@ -32,7 +16,6 @@ class PostForm(forms.ModelForm):
             'content': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Share something with your family...'})
         }
 
-
 class CommentForm(forms.ModelForm):
     author_name = forms.CharField(
         max_length=100, 
@@ -47,7 +30,6 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Add a comment...'})
         }
-
 
 class EventForm(forms.ModelForm):
     class Meta:
