@@ -90,7 +90,8 @@ def add_post_view(request):
     return render(request, 'news/add_news.html', {'form': form})
 
 def edit_post_view(request, post_id):
-    post = get_object_or_404(Post, id=post_id)    author_name_from_form = request.GET.get('author', post.author_name)    if request.method == 'POST':
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
