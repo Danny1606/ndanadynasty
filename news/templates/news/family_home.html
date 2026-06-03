@@ -12,28 +12,9 @@
         </div>
       </div>
       <div class="col-lg-5 text-center mt-4 mt-lg-0">
-        <img src="/media/post_images/1000098804.jpg" alt="Family gathering" class="img-fluid rounded shadow-lg" style="max-height:420px;">
+        <img src="/media/post_images/1000098804.jpg" alt="Ndana Family gathering - group photo" class="img-fluid rounded shadow-lg" style="max-height:420px;">
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Rest of your content (Our Story, Why We Gather, Featured Members, Events) stays the same -->
-<div class="container my-5">
-  <h2 class="mb-4">Featured Family Members</h2>
-  <div class="row">
-    {% for member in family_members %}
-    <div class="col-md-3 mb-4">
-      <div class="card h-100 text-center">
-        <img src="{{ member.image }}" class="card-img-top" alt="{{ member.name }}" style="height:220px; object-fit:cover;">
-        <div class="card-body">
-          <h5 class="card-title">{{ member.name }}</h5>
-          <p class="text-muted small">{{ member.role }}</p>
-          <p class="card-text">{{ member.bio }}</p>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
   </div>
 </div>
 {% endblock %}
