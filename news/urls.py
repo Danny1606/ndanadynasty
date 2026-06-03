@@ -21,6 +21,7 @@ urlpatterns = [
     # Event URLs
     path('add-event/', views.add_event_view, name='add_event'),
     path('edit-event/<int:event_id>/', views.edit_event_view, name='edit_event'),
+    path('delete-event/<int:event_id>/', views.delete_event_view, name='delete_event'),
 
     # Family pages (keep About + Contact, remove Tree)
     path('family/home/', views.family_home_view, name='family_home'),

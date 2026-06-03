@@ -465,6 +465,9 @@
                 <a href="{% url 'add_event' %}" class="btn-share">
                     <i class="fas fa-calendar-plus"></i> Create Event
                 </a>
+                <a href="{% url 'family_about' %}" class="btn-share">
+                    <i class="fas fa-info-circle"></i> About Family
+                </a>
             </div>
         </div>
 
@@ -488,14 +491,12 @@
                         </div>
                     </div>
                     <div class="post-actions">
-                        {% if user.is_authenticated and post.author == user.username or user.is_staff %}
                         <a href="{% url 'edit_post' post.id %}" class="btn-sm" title="Edit">
                             <i class="fas fa-edit"></i> Edit
                         </a>
                         <a href="{% url 'delete_post' post.id %}" class="btn-sm" title="Delete">
                             <i class="fas fa-trash"></i> Delete
                         </a>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -555,10 +556,8 @@
                         </div>
                         <div class="comment-text">{{ comment.text }}</div>
                         <div style="margin-top: 5px; display: flex; gap: 8px;">
-                            {% if user.is_authenticated and comment.author == user.username or user.is_staff %}
                             <a href="{% url 'edit_comment' comment.id %}" style="font-size: 0.85rem; color: #667eea; text-decoration: none;">Edit</a>
                             <a href="{% url 'delete_comment' comment.id %}" style="font-size: 0.85rem; color: #ef4444; text-decoration: none;">Delete</a>
-                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -603,9 +602,10 @@
                 <img src="{{ event.image.url }}" alt="{{ event.title }}" style="width: 100%; border-radius: 8px; margin-top: 10px; max-height: 200px; object-fit: cover;" loading="lazy">
                 {% endif %}
                 <p class="event-location" style="margin-top: 8px;">Organized by: {{ event.organizer_name }}</p>
-                {% if user.is_authenticated and event.organizer_name == user.username or user.is_staff %}
-                <a href="{% url 'edit_event' event.id %}" class="btn" style="margin-top: 10px; display: inline-block; text-decoration: none;">Edit Event</a>
-                {% endif %}
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                  <a href="{% url 'edit_event' event.id %}" class="btn" style="flex: 1; text-decoration: none; text-align: center;">Edit Event</a>
+                  <a href="{% url 'delete_event' event.id %}" class="btn" style="flex: 1; text-decoration: none; text-align: center; background: #ef4444; color: white;">Delete Event</a>
+                </div>
             </div>
             {% endfor %}
         </div>

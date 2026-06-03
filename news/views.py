@@ -90,8 +90,7 @@ def add_post_view(request):
     return render(request, 'news/add_news.html', {'form': form})
 
 def edit_post_view(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
+    post = get_object_or_404(Post, id=post_id)    author_name_from_form = request.GET.get('author', post.author_name)    if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
@@ -162,9 +161,6 @@ def like_post_view(request, post_id):
 
 def edit_event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    if not request.user.is_authenticated or (event.organizer_name != request.user.username and not request.user.is_staff):
-        return redirect('home')
-
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
@@ -174,6 +170,14 @@ def edit_event_view(request, event_id):
     else:
         form = EventForm(instance=event)
     return render(request, 'news/edit_event.html', {'form': form, 'event': event})
+
+
+def delete_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.method == 'POST':
+        event.delete()
+        return redirect('home')
+    return render(request, 'news/confirm_delete_event.html', {'event': event})
 
 
 def add_event_view(request):
