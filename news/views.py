@@ -11,27 +11,26 @@ def _get_user_likes(request):
     return set()
 
 
-def home_view(request):
+def _get_feed_context(request):
     posts = Post.objects.all().order_by('-created_at').annotate(likes_count=Count('likes'))
     events = Event.objects.all().order_by('date', 'time')
     activity_logs = ActivityLog.objects.all().order_by('-timestamp')[:20]
-    return render(request, 'news/home.html', {
+    return {
         'posts': posts,
         'events': events,
         'activity_logs': activity_logs,
         'user_likes': _get_user_likes(request),
-    })
+    }
+
+
+def home_view(request):
+    context = _get_feed_context(request)
+    return render(request, 'news/home.html', context)
+
 
 def public_feed_view(request):
-    posts = Post.objects.all().order_by('-created_at').annotate(likes_count=Count('likes'))
-    events = Event.objects.all().order_by('date', 'time')
-    activity_logs = ActivityLog.objects.all().order_by('-timestamp')[:20]
-    return render(request, 'news/public_home.html', {
-        'posts': posts,
-        'events': events,
-        'activity_logs': activity_logs,
-        'user_likes': _get_user_likes(request),
-    })
+    context = _get_feed_context(request)
+    return render(request, 'news/public_home.html', context)
 
 
 def family_home_view(request):

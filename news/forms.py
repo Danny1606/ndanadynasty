@@ -3,30 +3,30 @@ from .models import Post, Comment, Event
 
 class PostForm(forms.ModelForm):
     author_name = forms.CharField(
-        max_length=100, 
-        required=False, 
+        max_length=100,
+        required=False,
         label="Your Name (optional)",
         help_text="Leave blank to post anonymously"
     )
-    
+
     class Meta:
         model = Post
-        fields = ['content', 'image']
+        fields = ['author_name', 'content', 'image']
         widgets = {
             'content': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Share something with your family...'})
         }
 
 class CommentForm(forms.ModelForm):
     author_name = forms.CharField(
-        max_length=100, 
-        required=False, 
+        max_length=100,
+        required=False,
         label="Your Name (optional)",
         help_text="Leave blank to comment anonymously"
     )
-    
+
     class Meta:
         model = Comment
-        fields = ['text']
+        fields = ['author_name', 'text']
         widgets = {
             'text': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Add a comment...'})
         }
