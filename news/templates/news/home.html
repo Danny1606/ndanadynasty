@@ -611,23 +611,6 @@
         </div>
         {% endif %}
     </div>
-
-    <!-- Activity Feed Sidebar -->
-    {% if activity_logs %}
-    <div class="activity-section" style="margin-top: 30px;">
-        <div class="activity-title">
-            <i class="fas fa-stream"></i> Activity Feed
-        </div>
-        {% for activity in activity_logs %}
-        <div class="activity-item">
-            <strong>{{ activity.get_display_text }}</strong>
-            <div class="activity-time">
-                <i class="far fa-clock"></i> {{ activity.timestamp|timesince }} ago
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
 </div>
 
 {% endblock %}
