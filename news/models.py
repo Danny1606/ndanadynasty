@@ -41,10 +41,14 @@ class Event(models.Model):
     time = models.TimeField(blank=True, null=True)
     location = models.CharField(max_length=200, blank=True)
     image = models.ImageField(upload_to="event_images/", blank=True, null=True)
+    organizer_name = models.CharField(max_length=100, default="Guest")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+
+    def get_organizer_display(self):
+        return self.organizer_name
 
 class Like(models.Model):
     post = models.ForeignKey(Post, related_name="likes", on_delete=models.CASCADE)

@@ -602,6 +602,10 @@
                 {% if event.image %}
                 <img src="{{ event.image.url }}" alt="{{ event.title }}" style="width: 100%; border-radius: 8px; margin-top: 10px; max-height: 200px; object-fit: cover;" loading="lazy">
                 {% endif %}
+                <p class="event-location" style="margin-top: 8px;">Organized by: {{ event.organizer_name }}</p>
+                {% if user.is_authenticated and event.organizer_name == user.username or user.is_staff %}
+                <a href="{% url 'edit_event' event.id %}" class="btn" style="margin-top: 10px; display: inline-block; text-decoration: none;">Edit Event</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>

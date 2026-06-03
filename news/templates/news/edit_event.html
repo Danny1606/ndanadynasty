@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
+    .form-container p {
+        color: #6b7280;
+        margin-bottom: 30px;
+    }
+    .form-group {
+        margin-bottom: 25px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1f2937;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    .form-group small {
+        display: block;
+        margin-top: 6px;
+        color: #9ca3af;
+        font-size: 0.9rem;
+    }
+    .error-message {
+        color: #ef4444;
+        font-size: 0.9rem;
+        margin-top: 6px;
+    }
+    .current-image {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f9fafb;
+        border-radius: 8px;
+        text-align: center;
+    }
+    .current-image img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 6px;
+    }
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+    .btn-submit, .btn-cancel {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #4b5563;
+    }
+    .btn-cancel:hover {
+        background: #e5e7eb;
+    }
+    @media (max-width: 768px) {
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+        }
+        .form-container h2 {
+            font-size: 1.4rem;
+        }
+        .btn-group {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h2>✏️ Edit Event</h2>
+    <p>Update the event details or image.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Event Title *</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="error-message">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.date.id_for_label }}">Date *</label>
+            {{ form.date }}
+            {% if form.date.errors %}
+                <div class="error-message">{{ form.date.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.time.id_for_label }}">Time</label>
+            {{ form.time }}
+            {% if form.time.errors %}
+                <div class="error-message">{{ form.time.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.location.id_for_label }}">Location</label>
+            {{ form.location }}
+            {% if form.location.errors %}
+                <div class="error-message">{{ form.location.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="error-message">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Update Photo</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="error-message">{{ form.image.errors }}</div>
+            {% endif %}
+            <small>Upload a new image or leave blank to keep the current one</small>
+        </div>
+
+        {% if event.image %}
+        <div class="current-image">
+            <p style="color: #6b7280; margin-bottom: 10px;"><strong>Current Event Photo:</strong></p>
+            <img src="{{ event.image.url }}" alt="Current event image" loading="lazy">
+        </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a href="{% url 'home' %}" class="btn-cancel">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

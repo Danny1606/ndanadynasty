@@ -160,12 +160,30 @@ def like_post_view(request, post_id):
         return JsonResponse({'liked': liked, 'likes_count': likes_count})
     return redirect('home')
 
+def edit_event_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if not request.user.is_authenticated or (event.organizer_name != request.user.username and not request.user.is_staff):
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            event = form.save()
+            ActivityLog.objects.create(author_name=event.organizer_name, action='edit_event', event=event)
+            return redirect('home')
+    else:
+        form = EventForm(instance=event)
+    return render(request, 'news/edit_event.html', {'form': form, 'event': event})
+
+
 def add_event_view(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            event = form.save()
-            ActivityLog.objects.create(author_name="Guest", action='event', event=event)
+            event = form.save(commit=False)
+            event.organizer_name = request.user.username if request.user.is_authenticated else 'Guest'
+            event.save()
+            ActivityLog.objects.create(author_name=event.organizer_name, action='event', event=event)
             return redirect('home')
     else:
         form = EventForm()
