@@ -76,11 +76,18 @@ DATABASES = {
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
-    DATABASES["default"] = dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=False,
-    )
+    try:
+        DATABASES["default"] = dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=False,
+        )
+    except Exception as e:
+        import sys
+        masked = (DATABASE_URL[:8] + "..." + DATABASE_URL[-8:]) if len(DATABASE_URL) > 20 else "REDACTED"
+        print(f"Warning: invalid DATABASE_URL ({masked}): {e}", file=sys.stderr)
+        # Keep the default SQLite configuration so build steps (e.g. collectstatic)
+        # can complete even when a production DATABASE_URL is missing or malformed.
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

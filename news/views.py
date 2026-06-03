@@ -36,10 +36,34 @@ def public_feed_view(request):
 def family_home_view(request):
     events = Event.objects.all().order_by('date', 'time')[:4]
     family_members = [
-        {'name': 'Ndana', 'relation': 'Family Patriarch', 'bio': 'Keeping the Ndana legacy strong through love, faith, and family.', 'role': 'Founder'},
-        {'name': 'Mbathi', 'relation': 'Family Matriarch', 'bio': 'The heart of our home, guiding every celebration and gathering.', 'role': 'Matriarch'},
-        {'name': 'Dspy', 'relation': 'Next Generation', 'bio': 'Bringing fresh energy, stories, and smiles to the family table.', 'role': 'Youth Ambassador'},
-        {'name': 'Gypsy', 'relation': 'Family Storyteller', 'bio': 'Preserving memories, photos, and family history for tomorrow.', 'role': 'Historian'},
+        {
+            'name': 'Ndana',
+            'relation': 'Family Patriarch',
+            'bio': 'Keeping the Ndana legacy strong through love, faith, and family.',
+            'role': 'Founder',
+            'image': '/media/post_images/1000098804.jpg',
+        },
+        {
+            'name': 'Mbathi',
+            'relation': 'Family Matriarch',
+            'bio': 'The heart of our home, guiding every celebration and gathering.',
+            'role': 'Matriarch',
+            'image': '/media/post_images/1000098804_OyMQsxJ.jpg',
+        },
+        {
+            'name': 'Dspy',
+            'relation': 'Youth Ambassador',
+            'bio': 'Bringing fresh energy, stories, and smiles to the family table.',
+            'role': 'Youth Ambassador',
+            'image': '/media/post_images/1000098804_b2NFqnE.jpg',
+        },
+        {
+            'name': 'Gypsy',
+            'relation': 'Family Storyteller',
+            'bio': 'Preserving memories, photos, and family history for tomorrow.',
+            'role': 'Storyteller',
+            'image': '/media/post_images/1000098804.jpg',
+        },
     ]
     return render(request, 'news/family_home.html', {
         'events': events,
